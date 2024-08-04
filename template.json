@@ -1,0 +1,24 @@
+{
+  "hyperparameters": {
+    "batch": 1,
+    "channels": 3,
+    "frames": 70,
+    "height": 120,
+    "width": 120,
+    "unit": 2,
+    "epochs": 30
+  },
+  "datasets": [
+    {"dataset/positive/1.mp4": 1},
+    {"dataset/positive/2.mp4": 1},
+    {"dataset/positive/3.mp4": 1},
+    {"dataset/positive/4.mp4": 1},
+    {"dataset/positive/5.mp4": 1},
+    {"dataset/positive/6.mp4": 1},
+    {"dataset/positive/7.mp4": 1},
+    {"dataset/positive/8.mp4": 1},
+    {"dataset/positive/9.mp4": 1},
+    {"dataset/negative/1.mp4": 0},
+    {"dataset/negative/2.mp4": 0}
+  ]
+}
