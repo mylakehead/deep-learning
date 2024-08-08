@@ -14,51 +14,35 @@ class Inception3D(nn.Module):
         # width = (width' - kernel + 2 * padding)/stride + 1
         # params = kernel_height * kernel_width * kernel_depth * in_channels * out_channels + biases(out_channels)
 
-        # 1x1x1 conv output:
-        # frames = (frames' - 1 + 2 * 0)/1 + 1 = frames'
-        # height = (height' - 1 + 2 * 0)/1 + 1 = height'
-        # width = (width' - 1 + 2 * 0)/1 + 1 = width'
-        # params = 32
+        # L1
         self.branch1x1 = nn.Conv3d(in_channels, self.unit * 4, kernel_size=1)
         self.out_channels += self.unit * 4
 
-        # 1x1x1 conv -> 3x3x3 conv output:
-        # frames = (frames' - 3 + 2 * 1)/1 + 1 = frames'
-        # height = (height' - 3 + 2 * 1)/1 + 1 = height'
-        # width = (width' - 3 + 2 * 1)/1 + 1 = width'
-        # params = 48
-        # params = 5200
+        # L2
+        # L5
         self.branch3x3 = nn.Sequential(
             nn.Conv3d(in_channels, self.unit * 6, kernel_size=1),
             nn.Conv3d(self.unit * 6, self.unit * 8, kernel_size=3, padding=1)
         )
         self.out_channels += self.unit * 8
 
-        # 1x1x1 conv -> 5x5x5 conv output:
-        # frames = (frames' - 5 + 2 * 2)/1 + 1 = frames'
-        # height = (height' - 5 + 2 * 2)/1 + 1 = height'
-        # width = (width' - 5 + 2 * 2)/1 + 1 = width'
-        # params = 8
-        # params = 1004
+        # L3
+        # L6
         self.branch5x5 = nn.Sequential(
             nn.Conv3d(in_channels, self.unit, kernel_size=1),
             nn.Conv3d(self.unit, self.unit * 2, kernel_size=5, padding=2)
         )
         self.out_channels += self.unit * 2
 
-        # 3x3x3 max pooling -> 1x1x1 conv output:
-        # frames = (frames' - 3 + 2 * 1)/1 + 1 = frames'
-        # height = (height' - 3 + 2 * 1)/1 + 1 = height'
-        # width = (width' - 3 + 2 * 1)/1 + 1 = width'
-        # params = 0
-        # params = 16
+        # L4
+        # L7
         self.branch_pool = nn.Sequential(
             nn.AvgPool3d(kernel_size=3, stride=1, padding=1),
             nn.Conv3d(in_channels, self.unit * 2, kernel_size=1)
         )
         self.out_channels += self.unit * 2
 
-        # params = 33
+        # L9
         self.merge = nn.Conv3d(in_channels=self.out_channels, out_channels=1, kernel_size=1)
 
     def forward(self, x):
@@ -69,7 +53,9 @@ class Inception3D(nn.Module):
 
         _outputs = [branch1x1, branch3x3, branch5x5, branch_pool]
 
+        # L8
         x = torch.cat(_outputs, dim=1)
+        # L9
         x = self.merge(x)
 
         return x
@@ -107,22 +93,26 @@ class MLP(nn.Module):
     def __init__(self, frames, height, width):
         super(MLP, self).__init__()
 
-        self.fc1 = nn.Linear(frames * height * width, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 1)
+        n_flatten = frames * height * width
+
+        self.flatten = nn.Flatten()
+        self.fc1 = nn.Linear(n_flatten, 64)
+        self.bn1 = nn.LayerNorm(64)
+        self.dropout1 = nn.Dropout(0.3)
+        self.fc2 = nn.Linear(64, 32)
+        self.bn2 = nn.LayerNorm(32)
+        self.dropout2 = nn.Dropout(0.3)
+        self.fc3 = nn.Linear(32, 1)
 
         self.relu = nn.ReLU()
-        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        x = x.view(x.size(0), -1)
-
-        x = self.relu(self.fc1(x))
-        x = self.relu(self.fc2(x))
-
-        x = self.fc3(x)
-        x = self.sigmoid(x)
-
+        x = self.flatten(x)
+        x = self.relu(self.bn1(self.fc1(x)))
+        x = self.dropout1(x)
+        x = self.relu(self.bn2(self.fc2(x)))
+        x = self.dropout2(x)
+        x = torch.sigmoid(self.fc3(x))
         return x
 
 

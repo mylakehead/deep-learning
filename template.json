@@ -2,11 +2,12 @@
   "hyperparameters": {
     "batch": 1,
     "channels": 3,
-    "frames": 70,
+    "frames": 60,
     "height": 120,
     "width": 120,
     "unit": 2,
-    "epochs": 30
+    "epochs": 10,
+    "rate": 0.00003
   },
   "datasets": [
     {"dataset/positive/1.mp4": 1},
@@ -18,7 +19,35 @@
     {"dataset/positive/7.mp4": 1},
     {"dataset/positive/8.mp4": 1},
     {"dataset/positive/9.mp4": 1},
+    {"dataset/positive/10.mp4": 1},
+    {"dataset/positive/11.mp4": 1},
+    {"dataset/positive/12.mp4": 1},
+    {"dataset/positive/13.mp4": 1},
+    {"dataset/positive/14.mp4": 1},
+    {"dataset/positive/15.mp4": 1},
+    {"dataset/positive/16.mp4": 1},
+    {"dataset/positive/16.mp4": 1},
+    {"dataset/positive/17.mp4": 1},
+    {"dataset/positive/18.mp4": 1},
+    {"dataset/positive/19.mp4": 1},
+    {"dataset/positive/20.mp4": 1},
+    {"dataset/positive/21.mp4": 1},
+    {"dataset/positive/22.mp4": 1},
+    {"dataset/positive/23.mp4": 1},
+    {"dataset/positive/24.mp4": 1},
+    {"dataset/positive/25.mp4": 1},
     {"dataset/negative/1.mp4": 0},
-    {"dataset/negative/2.mp4": 0}
+    {"dataset/negative/2.mp4": 0},
+    {"dataset/negative/3.mp4": 0},
+    {"dataset/negative/4.mp4": 0},
+    {"dataset/negative/5.mp4": 0},
+    {"dataset/negative/6.mp4": 0},
+    {"dataset/negative/7.mp4": 0},
+    {"dataset/positive/8.mp4": 0},
+    {"dataset/positive/9.mp4": 0},
+    {"dataset/positive/10.mp4": 0},
+    {"dataset/positive/11.mp4": 0},
+    {"dataset/positive/12.mp4": 0},
+    {"dataset/positive/13.mp4": 0}
   ]
 }
